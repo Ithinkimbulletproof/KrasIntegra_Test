@@ -1,0 +1,40 @@
+{% extends 'core/base.html' %}
+{% load widget_tweaks %}
+{% block title %}Вход в систему{% endblock %}
+{% block extra_css %}
+<style>
+  .container {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+  .login-wrapper {
+    height: 100vh;
+  }
+</style>
+{% endblock %}
+{% block header %}{% endblock %}
+{% block content %}
+<div class="login-wrapper d-flex justify-content-center align-items-center">
+    <div>
+        <h1 class="text-center">Вход в систему</h1>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}">Имя пользователя</label>
+                {% render_field form.username class="form-control" %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.password.id_for_label }}">Пароль</label>
+                {% render_field form.password class="form-control" %}
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Войти</button>
+            </div>
+        </form>
+        <hr>
+        <div class="text-center">
+            <p>Нет аккаунта? <a href="{% url 'register' %}">Зарегистрируйтесь</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

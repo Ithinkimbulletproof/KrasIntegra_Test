@@ -1,0 +1,45 @@
+{% extends 'core/base.html' %}
+{% load widget_tweaks %}
+{% block title %}Добавить пользователя{% endblock %}
+{% block extra_css %}
+<style>
+  input.form-control,
+  select.form-control,
+  textarea.form-control {
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    padding: 0.5rem;
+    line-height: 1.5;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  input.form-control:focus,
+  select.form-control:focus,
+  textarea.form-control:focus {
+    border-color: #66afe9;
+    box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
+    outline: none;
+  }
+</style>
+{% endblock %}
+{% block content %}
+<h1 class="mb-4">Добавить пользователя</h1>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {# Выводим все поля, кроме is_admin #}
+    {% for field in form %}
+      {% if field.name != "is_admin" %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {% render_field field class="form-control" %}
+        </div>
+      {% endif %}
+    {% endfor %}
+    {# Выводим is_admin отдельно как чекбокс #}
+    <div class="form-group form-check">
+        <label class="form-check-label" for="{{ form.is_admin.id_for_label }}">Сделать администратором</label>
+        {% render_field form.is_admin class="form-check-input ml-2" %}
+    </div>
+    <button type="submit" class="btn btn-success">Сохранить</button>
+    <a href="{% url 'profile_list' %}" class="btn btn-secondary">Отмена</a>
+</form>
+{% endblock %}

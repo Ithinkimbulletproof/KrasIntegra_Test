@@ -1,0 +1,45 @@
+{% extends 'core/base.html' %}
+{% block title %}Список пользователей{% endblock %}
+{% block content %}
+<h1 class="mb-4">Список пользователей</h1>
+{% if user.is_authenticated and user.is_staff %}
+    <a href="{% url 'profile_create' %}" class="btn btn-success mb-3">Добавить пользователя</a>
+{% endif %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ФИО</th>
+            <th>Год рождения</th>
+            <th>Пол</th>
+            <th>Дата регистрации</th>
+            <th>Фото</th>
+            {% if user.is_authenticated and user.is_staff %}
+                <th>Действия</th>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody>
+    {% for profile in profiles %}
+        <tr>
+            <td><a href="{% url 'profile_detail' profile.pk %}">{{ profile.full_name }}</a></td>
+            <td>{{ profile.year_of_birth }}</td>
+            <td>{{ profile.get_gender_display }}</td>
+            <td>{{ profile.registration_date|date:"d.m.Y H:i" }}</td>
+            <td>
+                {% if profile.photo %}
+                    <img src="{{ profile.photo.url }}" alt="{{ profile.full_name }}" width="50">
+                {% else %}
+                    Нет фото
+                {% endif %}
+            </td>
+            {% if user.is_authenticated and user.is_staff %}
+            <td>
+                <a href="{% url 'profile_edit' profile.pk %}" class="btn btn-primary btn-sm">Редактировать</a>
+                <a href="{% url 'profile_delete' profile.pk %}" class="btn btn-danger btn-sm">Удалить</a>
+            </td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
