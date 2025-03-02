@@ -8,4 +8,7 @@ urlpatterns = [
     path("profile/<int:pk>/edit/", views.profile_edit, name="profile_edit"),
     path("profile/<int:pk>/delete/", views.profile_delete, name="profile_delete"),
     path("accounts/register/", views.register, name="register"),
+    path(
+        "registration-summary/", views.registration_summary, name="registration_summary"
+    ),
 ]

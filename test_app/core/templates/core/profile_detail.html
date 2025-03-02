@@ -10,7 +10,7 @@
     <img src="{{ profile.photo.url }}" alt="{{ profile.full_name }}" style="width: 200px; height: 200px; object-fit: cover;" class="img-fluid">
 {% endif %}
 {% if user.is_authenticated and user.is_staff %}
-    <a href="{% url 'profile_update' profile.pk %}" class="btn btn-primary mt-3">Редактировать</a>
+    <a href="{% url 'profile_edit' profile.pk %}" class="btn btn-primary mt-3">Редактировать</a>
     <a href="{% url 'profile_delete' profile.pk %}" class="btn btn-danger mt-3">Удалить</a>
 {% endif %}
 <div class="mt-3">

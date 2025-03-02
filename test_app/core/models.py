@@ -20,6 +20,9 @@ class UserProfile(models.Model):
         "Фото пользователя", upload_to="photos/", blank=True, null=True
     )
     is_admin = models.BooleanField("Администратор", default=False)
+    registered_by = models.CharField(
+        "Кем зарегистрирован", max_length=255, default="сам"
+    )
 
     def __str__(self):
         return self.full_name

@@ -19,15 +19,21 @@ def register(request):
             year_of_birth = form.cleaned_data.get("year_of_birth")
             gender = form.cleaned_data.get("gender")
             photo = form.cleaned_data.get("photo")
+            is_admin = form.cleaned_data.get("is_admin")
+            if request.user.is_authenticated and request.user != user:
+                reg_by = request.user.username
+            else:
+                reg_by = "сам"
             UserProfile.objects.create(
                 user=user,
                 full_name=full_name,
                 year_of_birth=year_of_birth,
                 gender=gender,
                 photo=photo,
-                is_admin=form.cleaned_data.get("is_admin"),
+                is_admin=is_admin,
+                registered_by=reg_by,
             )
-            if form.cleaned_data.get("is_admin"):
+            if is_admin:
                 user.is_staff = True
                 user.save()
             login(request, user)
@@ -65,16 +71,19 @@ def profile_create(request):
         form = RegistrationForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()
-            if form.cleaned_data.get("is_admin"):
+            is_admin = form.cleaned_data.get("is_admin")
+            if is_admin:
                 user.is_staff = True
                 user.save()
+            reg_by = request.user.username
             UserProfile.objects.create(
                 user=user,
                 full_name=form.cleaned_data.get("full_name"),
                 year_of_birth=form.cleaned_data.get("year_of_birth"),
                 gender=form.cleaned_data.get("gender"),
                 photo=form.cleaned_data.get("photo"),
-                is_admin=form.cleaned_data.get("is_admin"),
+                is_admin=is_admin,
+                registered_by=reg_by,
             )
             return redirect("profile_list")
     else:
@@ -121,3 +130,18 @@ def profile_delete(request, pk):
         profile.user.delete()
         return redirect("profile_list")
     return render(request, "core/profile_confirm_delete.html", {"profile": profile})
+
+
+@login_required
+def registration_summary(request):
+    sort = request.GET.get("sort", "-registration_date")
+    allowed_sort = ["full_name", "registered_by", "registration_date"]
+    field = sort.lstrip("-")
+    if field not in allowed_sort:
+        sort = "-registration_date"
+    profiles = UserProfile.objects.all().order_by(sort)
+    return render(
+        request,
+        "core/registration_summary.html",
+        {"profiles": profiles, "current_sort": sort},
+    )
